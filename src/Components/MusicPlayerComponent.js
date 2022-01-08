@@ -2,6 +2,8 @@ import React from 'react';
 class MusicPlayerComponent extends React.Component {
     constructor(props) {
         super(props);
+        this.weiter = this.weiter.bind(this);
+        this.gestures = this.gestures.bind(this);
         this.state = {
             token : props.token,
             player : ''
@@ -52,9 +54,9 @@ class MusicPlayerComponent extends React.Component {
     window.Leap.loop({enableGestures: true}, this.gestures);
     }
 
-    gestures(frame){         
+    gestures(frame){        
         if(frame.valid && frame.gestures.length > 0){
-          frame.gestures.forEach(function(gesture){
+          frame.gestures.forEach((gesture)=>{
               switch (gesture.type){
                 case "circle":
                     //this.lauter();
