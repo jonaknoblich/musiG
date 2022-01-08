@@ -4,14 +4,14 @@ class GestureComponent extends React.Component {
 
 
         componentDidMount() {
-            const script = document.createElement("script");
-            script.src = "http://js.leapmotion.com/leap-0.6.3.min.js";
-            script.async = true;
+            // const script = document.createElement("script");
+            // script.src = "http://js.leapmotion.com/leap-0.6.3.min.js";
+            // script.async = true;
         
-            document.body.appendChild(script);
-
-            Leap.loop({enableGestures: true}, function(frame){
-                console.log("hallo" + frame);
+            // document.body.appendChild(script);
+            console.log("HI");
+            window.Leap.loop({enableGestures: true}, function(frame){
+                
                 if(frame.valid && frame.gestures.length > 0){
                   frame.gestures.forEach(function(gesture){
                       switch (gesture.type){
