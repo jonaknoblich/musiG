@@ -8,6 +8,7 @@ class MusicPlayerComponent extends React.Component {
         }
     }
 
+
     componentDidMount(){
     const script = document.createElement("script");
     script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -48,12 +49,15 @@ class MusicPlayerComponent extends React.Component {
     };
 
     /** Gestures */
-    window.Leap.loop({enableGestures: true}, function(frame){         
+    window.Leap.loop({enableGestures: true}, this.gestures);
+    }
+
+    gestures(frame){         
         if(frame.valid && frame.gestures.length > 0){
           frame.gestures.forEach(function(gesture){
               switch (gesture.type){
                 case "circle":
-                    this.lauter();
+                    //this.lauter();
                     console.log("Circle Gesture");
                     break;
                 case "keyTap":
@@ -71,8 +75,7 @@ class MusicPlayerComponent extends React.Component {
               }
           });
         }
-      });
-    }
+      }
 
     leiser(){
         console.log("leiser");
@@ -97,6 +100,7 @@ class MusicPlayerComponent extends React.Component {
               });
           });
     }
+
 
     weiter(){
         this.state.player.nextTrack().then(() => {
