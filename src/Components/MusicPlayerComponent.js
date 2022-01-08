@@ -46,6 +46,32 @@ class MusicPlayerComponent extends React.Component {
         }));
 
     };
+
+    /** Gestures */
+    window.Leap.loop({enableGestures: true}, function(frame){         
+        if(frame.valid && frame.gestures.length > 0){
+          frame.gestures.forEach(function(gesture){
+              switch (gesture.type){
+                case "circle":
+                    this.lauter();
+                    console.log("Circle Gesture");
+                    break;
+                case "keyTap":
+                    console.log("Key Tap Gesture");
+                    break;
+                case "screenTap":
+                    console.log("Screen Tap Gesture");
+                    break;
+                case "swipe":
+                    this.weiter();
+                    console.log("Swipe Gesture");
+                    break;
+                default:
+                    break;
+              }
+          });
+        }
+      });
     }
 
     leiser(){

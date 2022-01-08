@@ -1,5 +1,5 @@
 import './App.css';
-import GestureComponent from './Components/GestureComponent';
+import SpotifyLogingComponent from './Components/SpotifyAuthorizationComponent';
 
 function App() {
 
@@ -8,7 +8,7 @@ function App() {
     //<TestComponent></TestComponent>
     <div className="App">
       <header className="App-header">
-      <GestureComponent></GestureComponent>
+      <SpotifyLogingComponent></SpotifyLogingComponent>
       </header>
     </div>
   );
