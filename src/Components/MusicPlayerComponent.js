@@ -6,7 +6,9 @@ class MusicPlayerComponent extends React.Component {
         this.gestures = this.gestures.bind(this);
         this.state = {
             token : props.token,
-            player : ''
+            player : '',
+            currentPalmPosition : -1
+
         }
     }
 
@@ -54,7 +56,8 @@ class MusicPlayerComponent extends React.Component {
     window.Leap.loop({enableGestures: true}, this.gestures);
     }
 
-    gestures(frame){        
+    gestures(frame){ 
+      
         if(frame.valid && frame.gestures.length > 0){
           frame.gestures.forEach((gesture)=>{
               switch (gesture.type){
@@ -69,13 +72,48 @@ class MusicPlayerComponent extends React.Component {
                     console.log("Screen Tap Gesture");
                     break;
                 case "swipe":
-                    this.weiter();
+                      //Classify swipe as either horizontal or vertical
+                      var isHorizontal = Math.abs(gesture.direction[0]) > Math.abs(gesture.direction[1]);
+                      //Classify as right-left or up-down
+                      if (isHorizontal) {
+                          if (gesture.direction[0] > 0) {
+                              //swipeDirection = "right";
+                              this.weiter();
+                          } else {
+                              //swipeDirection = "left";
+                              this.zurueck();
+                          }
+                        }
                     console.log("Swipe Gesture");
                     break;
                 default:
                     break;
               }
           });
+        }
+
+        if(frame.hands.length > 0){
+            console.log("das ist eine Hand");
+            frame.hands.forEach((hand)=>{
+                if(hand.type === "right"){
+                    if(hand.palmPosition[1] >= this.state.currentPalmPosition){
+                        this.lauter();
+                        console.log("LAUTER!");
+                        this.setState({
+                            currentPalmPosition: hand.palmPosition[1]
+                          });
+                        
+                    }
+                    else{
+                        this.leiser();
+                        console.log("LEISER!");
+                        this.setState({
+                            currentPalmPosition: hand.palmPosition[1]
+                          });
+                    }
+                    console.log("ID: " + frame.id + "Palm Position: " + hand.palmPosition[1]);
+                }
+            })
         }
       }
 
@@ -85,9 +123,11 @@ class MusicPlayerComponent extends React.Component {
         this.state.player.getVolume().then(volume => {
             //volume_percentage = volume * 100;
             //console.log(`The volume of the player is ${volume_percentage}%`);
-            this.state.player.setVolume(volume-0.1).then(() => {
-                console.log('Volume updated!');
-              });
+            if((volume-0.01) > 0){
+                this.state.player.setVolume(volume-0.01).then(() => {
+                    console.log('Volume' + volume);
+                  });
+            }
           });
         
     }
@@ -97,9 +137,11 @@ class MusicPlayerComponent extends React.Component {
         this.state.player.getVolume().then(volume => {
             //volume_percentage = volume * 100;
             //console.log(`The volume of the player is ${volume_percentage}%`);
-            this.state.player.setVolume(volume+0.1).then(() => {
-                console.log('Volume updated!');
-              });
+            if((volume+0.01) < 1){
+                this.state.player.setVolume(volume+0.01).then(() => {
+                    console.log('Volume' + volume);
+                  });
+            }
           });
     }
 
