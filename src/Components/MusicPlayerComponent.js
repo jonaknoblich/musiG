@@ -66,7 +66,7 @@ class MusicPlayerComponent extends React.Component {
     }
 
     gestures(frame) {
-        if (frame.valid && frame.gestures.length > 0) {
+        if (frame.valid && frame.gestures.length > 0 && frame.hands.length > 0) {
             this.leapGestures(frame)
         } else {
             this.ourGestures(frame)
@@ -79,13 +79,15 @@ class MusicPlayerComponent extends React.Component {
             switch (gesture.type) {
                 case "circle":
                     //this.lauter();
+                    this.jump()
                     console.log("Circle Gesture");
+
                     break;
                 case "swipe":
                     //Classify swipe as either horizontal or vertical
                     var isHorizontal = Math.abs(gesture.direction[0]) > Math.abs(gesture.direction[1]);
                     //Classify as right-left or up-down
-                    if (isHorizontal) {
+                    if (isHorizontal && (frame.hands[0].direction[1] <= 0.7)) {
                         if (gesture.direction[0] > 0) {
                             this.weiter();
                             return;
@@ -102,20 +104,27 @@ class MusicPlayerComponent extends React.Component {
         });
     }
 
+
     ourGestures(frame) {
         if (frame.hands.length > 0 && !this.state.gestureDone) {
             frame.hands.forEach((hand) => {
                 if (hand.direction[1] >= 0.8) {
                     this.gestureStop(hand);
                 } else if (hand.palmPosition[1] >= this.state.currentPalmPosition) {
+                    console.log(this.state.currentPalmPosition)
                     this.gestureVolup(hand);
                 } else if (hand.palmPosition[1] <= this.state.currentPalmPosition) {
                     this.gestureVoldown(hand);
+                    console.log(this.state.currentPalmPosition)
                 }
             })
         } else if (frame.hands.length === 0 && this.state.gestureDone) {
             this.state.gestureDone = false;
         }
+    }
+
+    skipSeconds(){
+
     }
 
     gestureVolup(hand) {
@@ -191,6 +200,21 @@ class MusicPlayerComponent extends React.Component {
         this.state.player.previousTrack().then(() => {
             console.log('Skipped to next track!');
         });
+    }
+
+    jump(){
+
+        this.state.player.addListener('player_state_changed',({
+            position,  
+        }) => {
+            if(position){
+            this.state.player.seek(position + 15000);
+            console.log("jumpo")
+            }
+            
+        });
+        //console.log(this.state.player)
+        //this.state.player.seek()
     }
 
 
