@@ -10,7 +10,19 @@ class MusicPlayerComponent extends React.Component {
             currentPalmPosition: -1,
             timeVisible: -1,
             gestureDone: false,
+            track: ''
+        }
 
+        this.track = {
+            name: "",
+            album: {
+                images: [
+                    { url: "" }
+                ]
+            },
+            artists: [
+                { name: "" }
+            ]
         }
     }
 
@@ -49,6 +61,9 @@ class MusicPlayerComponent extends React.Component {
                     return;
                 }
                 console.log("Track: ", state.track_window.current_track);
+
+                this.track = state.track_window.current_track;
+                //this.setPaused(state.paused);
 
             }));
 
@@ -193,6 +208,21 @@ class MusicPlayerComponent extends React.Component {
         });
     }
 
+    display() {
+        this.state.player.getCurrentState().then(state => {
+            if (!state) {
+              console.error('User is not playing music through the Web Playback SDK');
+              return;
+            }
+          
+            var current_track = state.track_window.current_track;
+            var next_track = state.track_window.next_tracks[0];
+          
+            console.log('Currently Playing', current_track);
+            console.log('Playing Next', next_track);
+          });
+    }
+
 
     render() {
         console.log('In render MusikPlayer')
@@ -200,10 +230,23 @@ class MusicPlayerComponent extends React.Component {
             <div className="container">
                 <div className="main-wrapper">
 
+                <img src={this.track.album.images[0].url} 
+                     className="now-playing__cover" alt="" />
+
+                <div className="now-playing__side">
+                    <div className="now-playing__name">{
+                                  this.track.name
+                                    }</div>
+
+                    <div className="now-playing__artist">{
+                                  this.track.artists[0].name
+                                  }</div>
+
                     <button onClick={() => this.leiser()}>Leiser</button>
                     <button onClick={() => this.lauter()}>Lauter</button>
                     <button onClick={() => this.weiter()}>Weiter</button>
                     <button onClick={() => this.zurueck()}>Zurück</button>
+                    </div>
                 </div>
             </div>
         );
