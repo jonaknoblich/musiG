@@ -1,4 +1,5 @@
 import React from 'react';
+import TestComponent from './TestComponent';
 class MusicPlayerComponent extends React.Component {
 
     constructor(props) {
@@ -26,7 +27,6 @@ class MusicPlayerComponent extends React.Component {
 
 
     }
-
 
     componentDidUpdate() {
         const script = document.createElement("script");
@@ -64,7 +64,6 @@ class MusicPlayerComponent extends React.Component {
                 console.log("Track: ", state.track_window.current_track);
 
                 this.state.track = state.track_window.current_track;
-                //this.setPaused(state.paused);
 
             }));
 
@@ -228,29 +227,7 @@ class MusicPlayerComponent extends React.Component {
     render() {
         console.log('this.state.track.name', this.state.track.name)
         return (
-        
-            <div className="container">
-                <div className="main-wrapper">
-
-                <img src={this.state.track.album.images[0].url} 
-                     className="now-playing__cover" alt="" />
-
-                <div className="now-playing__side">
-                    <div className="now-playing__name">{
-                                  this.state.track.name
-                                    }</div>
-
-                    <div className="now-playing__artist">{
-                                  this.state.track.artists[0].name
-                                  }</div>
-
-                    <button onClick={() => this.leiser()}>Leiser</button>
-                    <button onClick={() => this.lauter()}>Lauter</button>
-                    <button onClick={() => this.weiter()}>Weiter</button>
-                    <button onClick={() => this.zurueck()}>Zurück</button>
-                    </div>
-                </div>
-            </div>
+            <TestComponent track={this.state.track} ></TestComponent>
         );
     }
 }
