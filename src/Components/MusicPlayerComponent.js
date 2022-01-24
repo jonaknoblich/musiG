@@ -1,5 +1,6 @@
 import React from 'react';
 class MusicPlayerComponent extends React.Component {
+
     constructor(props) {
         super(props);
         this.weiter = this.weiter.bind(this);
@@ -10,24 +11,24 @@ class MusicPlayerComponent extends React.Component {
             currentPalmPosition: -1,
             timeVisible: -1,
             gestureDone: false,
-            track: ''
+            track: {
+                name: "",
+                album: {
+                    images: [
+                        { url: "" }
+                    ]
+                },
+                artists: [
+                    { name: "" }
+                ]
+            }
         }
 
-        this.track = {
-            name: "",
-            album: {
-                images: [
-                    { url: "" }
-                ]
-            },
-            artists: [
-                { name: "" }
-            ]
-        }
+
     }
 
 
-    componentDidMount() {
+    componentDidUpdate() {
         const script = document.createElement("script");
         script.src = "https://sdk.scdn.co/spotify-player.js";
         script.async = true;
@@ -62,7 +63,7 @@ class MusicPlayerComponent extends React.Component {
                 }
                 console.log("Track: ", state.track_window.current_track);
 
-                this.track = state.track_window.current_track;
+                this.state.track = state.track_window.current_track;
                 //this.setPaused(state.paused);
 
             }));
@@ -225,21 +226,22 @@ class MusicPlayerComponent extends React.Component {
 
 
     render() {
-        console.log('In render MusikPlayer')
+        console.log('this.state.track.name', this.state.track.name)
         return (
+        
             <div className="container">
                 <div className="main-wrapper">
 
-                <img src={this.track.album.images[0].url} 
+                <img src={this.state.track.album.images[0].url} 
                      className="now-playing__cover" alt="" />
 
                 <div className="now-playing__side">
                     <div className="now-playing__name">{
-                                  this.track.name
+                                  this.state.track.name
                                     }</div>
 
                     <div className="now-playing__artist">{
-                                  this.track.artists[0].name
+                                  this.state.track.artists[0].name
                                   }</div>
 
                     <button onClick={() => this.leiser()}>Leiser</button>
