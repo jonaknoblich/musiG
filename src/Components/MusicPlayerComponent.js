@@ -12,6 +12,17 @@ class MusicPlayerComponent extends React.Component {
             gestureDone: false,
 
         }
+        this.track = {
+            name: "Hello",
+            album: {
+                images: [
+                    { url: "" }
+                ]
+            },
+            artists: [
+                { name: "" }
+            ]
+        }
     }
 
 
@@ -44,12 +55,20 @@ class MusicPlayerComponent extends React.Component {
 
             console.log('Player: ', player)
 
-            player.addListener('player_state_changed', (state => {
+
+            
+
+            player.addListener('player_state_changed', ( state => {
+                
                 if (!state) {
                     return;
                 }
-                console.log("Track: ", state.track_window.current_track);
-
+                
+                this.track = state.track_window.current_track;
+                console.log('Track !!!' + this.track.name)
+                this.isPaused = state.paused;
+                this.isActive = false;
+                this.render();
             }));
 
         };
@@ -79,7 +98,7 @@ class MusicPlayerComponent extends React.Component {
             switch (gesture.type) {
                 case "circle":
                     //this.lauter();
-                    this.jump()
+                    //.jump()
                     console.log("Circle Gesture");
 
                     break;
@@ -202,7 +221,7 @@ class MusicPlayerComponent extends React.Component {
         });
     }
 
-    jump(){
+  /*   jump(){
 
         this.state.player.addListener('player_state_changed',({
             position,  
@@ -215,15 +234,28 @@ class MusicPlayerComponent extends React.Component {
         });
         //console.log(this.state.player)
         //this.state.player.seek()
-    }
+    } */
 
 
     render() {
-        console.log('In render MusikPlayer')
+        console.log('In render MusikPlayer' + this.track.name)
+        const track = this.track.name;
         return (
             <div className="container">
                 <div className="main-wrapper">
+                    <div>Hi{track}!</div>
+                <img src={this.track.album.images[0].url} 
+                     className="now-playing__cover" alt="" />
 
+                <div className="now-playing__side">
+                    <div className="now-playing__name">{
+                                  this.track.name
+                                  }</div>
+
+                    <div className="now-playing__artist">{
+                                  this.track.artists[0].name
+                                  }</div>
+                </div>
                     <button onClick={() => this.leiser()}>Leiser</button>
                     <button onClick={() => this.lauter()}>Lauter</button>
                     <button onClick={() => this.weiter()}>Weiter</button>
