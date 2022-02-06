@@ -10,20 +10,22 @@ class MusicPlayerComponent extends React.Component {
             currentPalmPosition: -1,
             timeVisible: -1,
             gestureDone: false,
+            track : {
+                name: "Willkommen zu MusiG",
+                album: {
+                    images: [
+                        { url: "" }
+                    ]
+                },
+                artists: [
+                    { name: "" }
+                ]
+            }
 
         }
-        this.track = {
-            name: "Hello",
-            album: {
-                images: [
-                    { url: "" }
-                ]
-            },
-            artists: [
-                { name: "" }
-            ]
-        }
+ 
     }
+
 
 
     componentDidMount() {
@@ -36,7 +38,7 @@ class MusicPlayerComponent extends React.Component {
         window.onSpotifyWebPlaybackSDKReady = () => {
 
             const player = new window.Spotify.Player({
-                name: 'Web Playback SDK',
+                name: 'MusiG',
                 getOAuthToken: cb => { cb(this.state.token); },
                 volume: 0.5
             });
@@ -63,19 +65,19 @@ class MusicPlayerComponent extends React.Component {
                 if (!state) {
                     return;
                 }
+                this.setState({track: state.track_window.current_track})
                 
-                this.track = state.track_window.current_track;
-                console.log('Track !!!' + this.track.name)
+                console.log('Track !!!' + this.state.track.name)
                 this.isPaused = state.paused;
                 this.isActive = false;
-                this.render();
+                
             }));
 
         };
 
         /** Gestures */
        let controller =  window.Leap.loop({ enableGestures: true }, ()=>{
-        let frame2 = controller.frame(10);
+        let frame2 = controller.frame(15);
         if (frame2.valid && frame2.gestures.length > 0) {
             this.leapGestures(frame2)
         } else {
@@ -86,7 +88,8 @@ class MusicPlayerComponent extends React.Component {
 
     gestures(frame) {
         if (frame.valid && frame.gestures.length > 0 && frame.hands.length > 0) {
-            this.leapGestures(frame)
+            this.leapGestures(frame);
+            return;
         } else {
             this.ourGestures(frame)
         }
@@ -106,7 +109,7 @@ class MusicPlayerComponent extends React.Component {
                     //Classify swipe as either horizontal or vertical
                     var isHorizontal = Math.abs(gesture.direction[0]) > Math.abs(gesture.direction[1]);
                     //Classify as right-left or up-down
-                    if (isHorizontal && (frame.hands[0].direction[1] <= 0.7)) {
+                    if (isHorizontal && frame.hands[0] !== undefined && (frame.hands[0].direction[1] <= 0.7)) {
                         if (gesture.direction[0] > 0) {
                             this.weiter();
                             return;
@@ -238,28 +241,28 @@ class MusicPlayerComponent extends React.Component {
 
 
     render() {
-        console.log('In render MusikPlayer' + this.track.name)
-        const track = this.track.name;
+        console.log('In render MusikPlayer ' + this.state.track.name)
+        const track = this.state.track.name;
         return (
             <div className="container">
                 <div className="main-wrapper">
-                    <div>Hi{track}!</div>
-                <img src={this.track.album.images[0].url} 
+            
+                <img src={this.state.track.album.images[0].url} 
                      className="now-playing__cover" alt="" />
 
                 <div className="now-playing__side">
                     <div className="now-playing__name">{
-                                  this.track.name
+                                  this.state.track.name
                                   }</div>
 
                     <div className="now-playing__artist">{
-                                  this.track.artists[0].name
+                                  this.state.track.artists[0].name
                                   }</div>
                 </div>
-                    <button onClick={() => this.leiser()}>Leiser</button>
+                    {/* <button onClick={() => this.leiser()}>Leiser</button>
                     <button onClick={() => this.lauter()}>Lauter</button>
                     <button onClick={() => this.weiter()}>Weiter</button>
-                    <button onClick={() => this.zurueck()}>Zurück</button>
+                    <button onClick={() => this.zurueck()}>Zurück</button> */}
                 </div>
             </div>
         );
