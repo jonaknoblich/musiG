@@ -18,9 +18,10 @@ class MusicPlayerComponent extends React.Component {
                     ]
                 },
                 artists: [
-                    { name: "" }
+                    { name: "Verbinden Sie sich mit Spotify!" }
                 ]
-            }
+            },
+            trackPosition: -1
 
         }
  
@@ -66,8 +67,9 @@ class MusicPlayerComponent extends React.Component {
                     return;
                 }
                 this.setState({track: state.track_window.current_track})
-                
+                this.setState({position: state.position})
                 console.log('Track !!!' + this.state.track.name)
+                console.log('Trackposition !!!' + this.state.position)
                 this.isPaused = state.paused;
                 this.isActive = false;
                 
@@ -87,34 +89,43 @@ class MusicPlayerComponent extends React.Component {
     }
 
     gestures(frame) {
-        if (frame.valid && frame.gestures.length > 0 && frame.hands.length > 0) {
-            this.leapGestures(frame);
-            return;
-        } else {
-            this.ourGestures(frame)
+        if (!this.state.gestureDone){
+            if (frame.valid && frame.gestures.length > 0 && frame.hands.length > 0) {
+                this.leapGestures(frame);
+                return;
+            } else {
+                this.ourGestures(frame)
+            }
         }
+
 
     }
 
     leapGestures(frame) {
+        console.log("GESTEN ERKANNT: " , frame.gestures)
         frame.gestures.forEach((gesture) => {
             switch (gesture.type) {
                 case "circle":
                     //this.lauter();
-                    //.jump()
+                    this.jump()
                     console.log("Circle Gesture");
-
+                    this.setState({gestureDone:true});
+                    setTimeout(()=> { this.setState({gestureDone:false}) }, 2000);
                     break;
                 case "swipe":
                     //Classify swipe as either horizontal or vertical
                     var isHorizontal = Math.abs(gesture.direction[0]) > Math.abs(gesture.direction[1]);
                     //Classify as right-left or up-down
                     if (isHorizontal && frame.hands[0] !== undefined && (frame.hands[0].direction[1] <= 0.7)) {
-                        if (gesture.direction[0] > 0) {
+                        if (gesture.direction[0] > 0 && gesture.state === "stop") {
                             this.weiter();
+                            this.setState({gestureDone:true});
+                            setTimeout(()=> { this.setState({gestureDone:false}) }, 1000);
                             return;
-                        } else {
+                        } else if(gesture.direction[0] <= 0 && gesture.state === "stop"){
                             this.zurueck();
+                            this.setState({gestureDone:true});
+                            setTimeout(()=> { this.setState({gestureDone:false}) }, 1000);
                             return;
                         }
                     }
@@ -130,12 +141,17 @@ class MusicPlayerComponent extends React.Component {
     ourGestures(frame) {
         if (frame.hands.length > 0 && !this.state.gestureDone) {
             frame.hands.forEach((hand) => {
-                if (hand.direction[1] >= 0.8) {
-                    this.gestureStop(hand);
-                } else if (hand.palmPosition[1] >= this.state.currentPalmPosition) {
-                    console.log(this.state.currentPalmPosition)
+                console.log("HAND DIRECTION: " ,hand.direction[1])
+                if (hand.direction[1] >= 0.9) {
+                    setTimeout(()=> { this.gestureStop(hand) }, 1000);
+                    
+                    this.setState({gestureDone:true});
+                    setTimeout(()=> { this.setState({gestureDone:false}) }, 10000);
+                    return;
+                } else if (hand.palmPosition[1] >= this.state.currentPalmPosition + 1) {
+                    console.log("PALM POSITION:" , this.state.currentPalmPosition)
                     this.gestureVolup(hand);
-                } else if (hand.palmPosition[1] <= this.state.currentPalmPosition) {
+                } else if (hand.palmPosition[1] <= this.state.currentPalmPosition - 1) {
                     this.gestureVoldown(hand);
                     console.log(this.state.currentPalmPosition)
                 }
@@ -224,20 +240,16 @@ class MusicPlayerComponent extends React.Component {
         });
     }
 
-  /*   jump(){
-
-        this.state.player.addListener('player_state_changed',({
-            position,  
-        }) => {
-            if(position){
-            this.state.player.seek(position + 15000);
+    jump(){
+            if(this.state.position){
+            this.state.player.seek(this.state.position + 10000);
             console.log("jumpo")
+            return;
             }
-            
-        });
+
         //console.log(this.state.player)
         //this.state.player.seek()
-    } */
+    }
 
 
     render() {
