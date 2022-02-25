@@ -1,5 +1,5 @@
 import './App.css';
-import SpotifyLoginComponent from './Components/SpotifyAuthorizationComponent';
+import SpotifyLogingComponent from './Components/SpotifyAuthorizationComponent';
 
 function App() {
 
@@ -8,7 +8,7 @@ function App() {
     //<TestComponent></TestComponent>
     <div className="App">
       <header className="App-header">
-      <SpotifyLoginComponent></SpotifyLoginComponent>
+      <SpotifyLogingComponent></SpotifyLogingComponent>
       </header>
     </div>
   );
